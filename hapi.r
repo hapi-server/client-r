@@ -57,15 +57,17 @@ hapi <- function(...) {
       # Number of columns of parameter
       Nc = prod(size)
       
+      print(paste("Extracting columns ", k, "through", (k+Nc+1)), sep="")
       data <- c(data, list(csv[, k:(k+Nc-1)]))
       
       if (FALSE) {
         size = array(size)
         
-        # Prepend number of rows (number of time values)
+        # Prepend number of rows (number of time values) so that
+        # size = array(Nr, Nc[1], Nc[2], ...)
         size = append(size, Nr, 0)
   
-        print(paste("Extracting columns ", size, "-", (k+size)), sep="")
+        print(paste("Extracting columns ", k, "through", (k+Nc+1)), sep="")
 
         # Extract columns and re-shape to have shape Nr, Nc[1], Nc[2], ...
         data2 = array(data.matrix(csv[, k:(k+Nc-1)]), size)

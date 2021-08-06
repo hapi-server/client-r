@@ -37,3 +37,5 @@ stop       = "1970-01-01T00:00:11Z"
 
 data = hapi(server, dataset, parameters, start, stop)
 data
+
+# Want data['transformmulti'] to be a matrix with dimensions (10,3,3)
