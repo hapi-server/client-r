@@ -32,7 +32,7 @@ hapi <- function(...) {
     # TODO: Why [[]] needed here?
     meta = hapi(args[[1]], args[[2]], args[[3]])
 
-    url = paste(args[1], "data?id=", args[2], "&parameters=", args[3], "&time.min=", args[4], "&time.max=", args[5], sep="")
+    url = paste(args[[1]], "data?id=", args[[2]], "&parameters=", args[[3]], "&time.min=", args[4], "&time.max=", args[5], sep="")
     print(paste("hapi(): Downloading", url, sep=" "))
     csv = read.csv(url, header=FALSE)
     
@@ -41,6 +41,9 @@ hapi <- function(...) {
     # Put each column from csv into individual list element
     data = list(csv[, 1])
     
+    # Number of rows (time values)
+    Nr = length(data[[1]])
+    
     k = 2
     for (i in 2:length(parameters)) {
       if ("size" %in% names(meta["parameters"][[1]][[i]])) {
@@ -48,11 +51,31 @@ hapi <- function(...) {
       } else {
         size = 1
       }
-      size = prod(as.integer(size))
-      print(paste("Extracting columns ", size, "-", (k+size)), sep="")
-      data <- c(data, list(csv[, k:(k+size-1)]))
-      k = k + size
-    }    
+      
+      size = as.integer(size)
+
+      # Number of columns of parameter
+      Nc = prod(size)
+      
+      data <- c(data, list(csv[, k:(k+Nc-1)]))
+      
+      if (FALSE) {
+        size = array(size)
+        
+        # Prepend number of rows (number of time values)
+        size = append(size, Nr, 0)
+  
+        print(paste("Extracting columns ", size, "-", (k+size)), sep="")
+
+        # Extract columns and re-shape to have shape Nr, Nc[1], Nc[2], ...
+        data2 = array(data.matrix(csv[, k:(k+Nc-1)]), size)
+        
+        # Add to named list (not working properly)
+        data <- c(data, data2)
+      }
+      k = k + Nc
+
+    }
     # Add names based on request parameters
     # If args[3] = "param1,param2", the following is equivalent to 
     # e.g., names(data) <- c("Time", "param1", "param2")

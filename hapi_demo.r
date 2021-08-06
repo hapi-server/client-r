@@ -29,9 +29,11 @@ if (FALSE) {
 
 server     = "http://hapi-server.org/servers/TestData2.0/hapi/"
 dataset    = "dataset1"
-parameters = "scalar,vector,transformmulti"
+parameters = "transformmulti"
 start      = "1970-01-01Z"
 stop       = "1970-01-01T00:00:11Z"
+
+#meta = hapi(server, dataset, parameters)
 
 data = hapi(server, dataset, parameters, start, stop)
 data
