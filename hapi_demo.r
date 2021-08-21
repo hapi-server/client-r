@@ -33,7 +33,7 @@ data
 
 server     <- "http://hapi-server.org/servers/TestData2.0/hapi/"
 dataset    <- "dataset1"
-parameters <- "transformmulti"
+parameters <- "scalar,transformmulti"
 start      <- "1970-01-01Z"
 stop       <- "1970-01-01T00:00:11Z"
   

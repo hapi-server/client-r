@@ -31,19 +31,19 @@ hapi <- function(server = NULL, dataset = NULL, parameters = NULL, start = NULL,
   }
 
   meta <- hapi(server, dataset, parameters)
-    
+
   url <- paste(server, "data?id=", dataset, "&parameters=", parameters, "&time.min=", start, "&time.max=", stop, sep="")
   print(paste("hapi(): Downloading", url, sep=" "))
   csv <- data.table::fread(url)
-    
+
   parameters <- unlist(strsplit(paste("Time", parameters, sep=","), ","))
-    
-    # Put each column from csv into individual list element
+
+  # Put each column from csv into individual list element
   data <- list(csv[, 1])
-    
-    # Number of rows (time values)
+
+  # Number of rows (time values)
   Nr <- nrow(data[[1]])
-    
+
   k = 2
   for (i in 2:length(parameters)) {
     if ("size" %in% names(meta$parameters[[i]])) {
@@ -51,11 +51,15 @@ hapi <- function(server = NULL, dataset = NULL, parameters = NULL, start = NULL,
     } else {
       size <- 1
     }
+
+    # TODO: If number of elements in size > 2, raise error
+    # and note that this client does not handle.
+
     # Number of columns of parameter
     Nc <- prod(size)
     print(paste("Extracting columns ", k, "through", (k+Nc-1)), sep="")
-        
-    #convert into a matrix in order to convert into an array 
+
+    # Convert into a matrix in order to convert into an array 
     data2 <- data.matrix(as.factor(unlist((csv[, k:(k+Nc-1)]))))
     dim(data2) <- c(Nr, Nc)
     listfinal <- c()
@@ -87,18 +91,17 @@ hapi <- function(server = NULL, dataset = NULL, parameters = NULL, start = NULL,
     }
     size <- append(size, Nr)
     data_final <- array(finalvec, dim = size)
-    
- 
+
     data <- c(data, list(data_final))
-      
+
     k <- k + Nc
-      
+
   }
-    # Add names based on request parameters
-    # If args[3] = "param1,param2", the following is equivalent to 
-    # e.g., names(data) <- c("Time", "param1", "param2")
+  # Add names based on request parameters
+  # If args[3] = "param1,param2", the following is equivalent to 
+  # e.g., names(data) <- c("Time", "param1", "param2")
   names(data) <- c(parameters)
-    
+
   return(data)
-  
+
 }
