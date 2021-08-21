@@ -38,6 +38,14 @@ hapi <- function(server = NULL, dataset = NULL, parameters = NULL, start = NULL,
 
   parameters <- unlist(strsplit(paste("Time", parameters, sep=","), ","))
 
+  if (FALSE) {
+    parameters = vector()
+    for (i in 2:length(meta$parameters)) {
+      parameters <- append(parameters, getElement(meta$parameters[[i]],"name"))
+      print(getElement(meta$parameters[[i]],"name"))
+    }
+    print(parameters)
+  }
   # Put each column from csv into individual list element
   data <- list(csv[, 1])
 
