@@ -70,35 +70,38 @@ hapi <- function(server = NULL, dataset = NULL, parameters = NULL, start = NULL,
     # Convert into a matrix in order to convert into an array 
     data2 <- data.matrix(as.factor(unlist((csv[, k:(k+Nc-1)]))))
     dim(data2) <- c(Nr, Nc)
-    listfinal <- c()
-    for(p in 1:Nr){
-      if(length(size) == 1){
-        size <- append(1,size)
-      }
-      currentcol <- 1
-      ncolumns <- size[1] * size[2]
-      nmat <- Nc/ncolumns
-      listmat <- list()
-      for(m in 1:nmat){
-        dataformat <- data2[p,currentcol:(currentcol + ncolumns - 1)]
-        dim(dataformat) <- c(size[2],size[1])
-        dataformat <- t(dataformat)
-        listmat[[m]] <- dataformat
-        currentcol <- currentcol + ncolumns
-      }
-      matvec <- c()
-      for(l in 1:nmat){
-        matvec <- append(matvec, listmat[[l]])
-      }
-      array_cur <- array(matvec, dim = size)
-      listfinal[[p]] <- array_cur
+    if(length(size) == 1){
+      data_final <- data2
     }
-    finalvec <- c()
-    for(val in 1:Nr){
-      finalvec <- append(finalvec, listfinal[[p]])
+    else{
+      listfinal <- c()
+      for(p in 1:Nr){
+        currentcol <- 1
+        ncolumns <- size[1] * size[2]
+        nmat <- Nc/ncolumns
+        listmat <- list()
+        for(m in 1:nmat){
+          dataformat <- data2[p,currentcol:(currentcol + ncolumns - 1)]
+          dim(dataformat) <- c(size[2],size[1])
+          dataformat <- t(dataformat)
+          listmat[[m]] <- dataformat
+          currentcol <- currentcol + ncolumns
+        }
+        matvec <- c()
+        for(l in 1:nmat){
+          matvec <- append(matvec, listmat[[l]])
+        }
+        array_cur <- array(matvec, dim = size)
+        listfinal[[p]] <- array_cur
+      }
+      finalvec <- c()
+      for(val in 1:Nr){
+        finalvec <- append(finalvec, listfinal[[p]])
+      }
+      size <- append(size, Nr)
+      data_final <- array(finalvec, dim = size)
     }
-    size <- append(size, Nr)
-    data_final <- array(finalvec, dim = size)
+    
 
     data <- c(data, list(data_final))
 
